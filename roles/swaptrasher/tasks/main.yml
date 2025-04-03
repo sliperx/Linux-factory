@@ -1,0 +1,11 @@
+---
+# tasks file for swaptrasher
+- name: disable swapfile
+  shell: swapoff -a {{ path_swap }}swapfile
+- name: remove swapfile
+  shell: rm {{ path_swap }}swapfile
+- name: removing swapline in fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: '^{{ path_swap }}swapfile'
+    state: absent

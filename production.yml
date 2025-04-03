@@ -1,0 +1,10 @@
+---
+- hosts: web
+  roles:
+    - { role: 'common' }
+      #- { role: 'hostname'}
+- hosts: db
+  roles:
+    - { role: 'swaptrasher' }  
+      #- { role: 'common' }
+    #- { role: 'hostname'}

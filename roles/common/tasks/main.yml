@@ -1,0 +1,40 @@
+---
+# tasks file for common
+- name: set timezone to "{{ region }}/{{ city }}"
+  timezone:
+    name: "{{ region }}/{{ city }}"
+- name: set hostname from inventory_hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+- block:
+    - name: debug env swap_size
+      debug:
+        msg: "swap_size is {{ swap_size }}"
+    - name: create a swap file
+      shell: fallocate -l {{ swap_size }} {{ path_swap }}swapfile
+      args:
+        creates: "{{ path_swap }}swapfile"
+    - name: set the correct permissions
+      file:
+        path: "{{ path_swap }}swapfile"
+        owner: root
+        group: root
+        mode: '0600'
+    
+    - name: make the file a swap file
+      shell: mkswap {{ path_swap }}swapfile
+      when: ansible_facts.swapfree_mb == 0
+
+    - name: enable the swap file
+      shell: swapon {{ path_swap }}swapfile
+      when: ansible_facts.swapfree_mb == 0
+
+    - name: add swap file to fstab
+      mount:
+        name: none
+        src: "{{ path_swap }}swapfile"
+        fstype: swap
+        opts: sw
+        passno: 0
+        dump: 0
+        state: present

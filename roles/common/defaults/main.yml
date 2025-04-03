@@ -1,0 +1,6 @@
+---
+# defaults file for common
+swap_size: "1G"
+region: "Europe"
+city: "Moscow"
+path_swap: "/etc/"
